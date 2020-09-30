@@ -1,3 +1,5 @@
+# Installing necessary packages
+
 p <- c("readr", "tidyverse", "corrplot")
 
 install.packages(p)
@@ -61,6 +63,7 @@ beach <- beach %>%
 # Removing rows with missing gender values
 
 beach <- na.omit(beach)
+str(beach)
 
 # Sample Plots
  
@@ -71,7 +74,7 @@ ggplot(beach, aes(x = MembershipType, y = RetailRevenue)) +
 library(DataExplorer)
 
 plot_bar(beach)
-
+plot_histogram(beach)
 
 # Understanding correlations between numeric variables
 
@@ -145,25 +148,27 @@ beach$MembershipLevelFastest <- as.factor(beach$MembershipLevelFastest)
 beach$`MembershipLevelNon-Member` <- as.factor(beach$`MembershipLevelNon-Member`)
 
 # Partitioning our data into training and validation
+# Actually since this is just going to be an explanatory analysis and not predictive, I do not need to
+# partition the data into training and validation sets.
 
-# Setting seed so that these partitions can be replicated
-set.seed(12)
+# However, I will still be creating two models: one that explains Retail Revenue, and one that explains Upgrade Revenue
+# Therefore, I need to make two data sets, one with and one without Retail Revenue
 
-# Actual partitioning
-index <- sample(1:nrow(beach), size = round(0.7*nrow(beach)), replace=FALSE)
+beachRetail <- beach %>%
+  select(-UpgradeRevenue)
 
-beach.train <- beach[index, ]
-beach.valid <- beach[-index,]  
+beachUpgrade <- beach %>%
+  select(-RetailRevenue, -`MembershipTypeNon-Member`, -`MembershipLevelNon-Member`)
 
-nrow(beach.train)
-nrow(beach.valid)
-
-# Creating a linear model based on training data
-model.train <- lm(RetailRevenue ~ ., data = beach.train)
+# Creating linear model 1
+modelRetail <- lm(RetailRevenue ~ ., data = beachRetail)
 options(scipen = 999)
 
-# Summary of model
-summary(model.train)
+summary(modelRetail)
+
+# Creating linear model 2
+modelUpgrade <- lm(UpgradeRevenue ~ ., data = beachUpgrade)
+summary(modelUpgrade)
 
 # Some initial observations:
 #   
