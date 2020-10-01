@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "1453707985",
+    "hash" : "1877557483",
     "id" : "A5A432AB",
-    "lastKnownWriteTime" : 1601476165,
-    "last_content_update" : 1601476165935,
+    "lastKnownWriteTime" : 1601566640,
+    "last_content_update" : 1601566640454,
     "path" : "~/Documents/MSBA/ISA 616/ISA616-Project/BeachAnalysis.R",
     "project_path" : "BeachAnalysis.R",
     "properties" : {
-        "cursorPosition" : "172,0",
-        "scrollLine" : "146"
+        "cursorPosition" : "21,0",
+        "scrollLine" : "3"
     },
     "relative_order" : 1,
     "source_on_save" : false,

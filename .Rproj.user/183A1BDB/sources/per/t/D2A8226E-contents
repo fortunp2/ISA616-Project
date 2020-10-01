@@ -1,0 +1,99 @@
+---
+title: "Beach Tan Explanatory Analysis"
+author: "Peter Fortunato"
+date: "10/1/2020"
+output: 
+  html_document:
+  toc: TRUE
+  number_sections: TRUE
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. Introduction and Data Dictionary
+
+Beach Tan Inc. is a major national franchiser of tanning salons. Their two main products include "UV Tans", which are offered in tanning beds or stand-up booths, and "Sunless Tans", which are provided via a spray-on solution and do not expose the user to any UV tans. 
+
+In addition to their two methods of tanning, Beach Tan Inc. also sells specially formulated skin care products that can enhance the quality and duration of tanning results.
+
+Beach Tan Inc. also offers a convenient membership program allows clients more control over their decision-making power.
+
+Let's read in and explore the data:
+```{r}
+library(readr)
+beach <- read.csv("BeachTan/BeachTan.csv")
+str(beach)
+```
+
+This data frame of 11,041 observations and 12 variables was collected in 2014. According to the data dictionary, the variables in the model include:
+
+* **UIDClient**: Client Indentification Number
+* **UIDStoreLocation**: Store Identification Number (10 include in this data set)
+* **Gender**: 0 = Female, 1 = Male
+* **DateJoined**: Date the client joined (if non-member this is the date of their first tanning session)
+* **DaysSinceJoined**: The number of days elapsed between DateJoined and 11/01/2014
+* **MembershipType**: 0 = Non-Member, 1 = Monthly Membership, 2 = Annual Membership
+* **MembershipLevel**: This variable corresponds to the strength and quality of tanning equipment offered to clients on what level of membership they have. Better equipment means faster tanning results. 0 = Non-Member, 1 = Fast, 2 = Faster, 3 = Fastest, 4 = Instant
+* **Age**: The age of client in years
+* **UVTans**: The number of UV Tans a client has received since joining Beach Tan
+* **SunlessTans**: The number of Sunless Tans a client has received since joining Beach Tan
+* **UpgradedRevenue**: The amount of extra money spent (in dollars) by members to tan in a higher level bed than what their regular membership would include.
+* **RetailRevenue**: The amound of money spent (in dollars) by any client on various skin car lotions and products offered by Beach Tan
+
+Looking at the structure of the Beach Tan data frame and understanding the information presented within the variables, it's clear that I will need to change the format of some of the variables. However, I will get to that in another section for I must first explain the analyses I will be conducting on this data.
+
+## 2. Analysis Preview and Revision of Business Value Proposition
+
+In my original Business Value Proposition, I outlined how the two main products that I would deliver with my analysis were a predictive model to understand future clients' spend as well as a visualization dashboard to help non-members understand how their spending habbits would be better suited if they were to become a member.
+
+After working with this data set for some time, I've come to the conclusion that neither of those two products are feasible. The predictive model cannot be done for there are no new observations in which to predict their total Retail Revenue. And for the visualization dashboard, the data doesn't really explain how much members are saving versus non-members.
+
+It is for these reasons that I have decided to change the product which I will be offering. Instead of a predictive model and visualization dashboard, I shall conduct two explanatory analyses in order to understand two things: the variables that explain Retail Revenue as well as the variables that explain Upgraded Revenue. I believe these insights will still help Beach Tan understand how they can adjust their marketing and promotional strategies to increase company revenue.
+
+## 3. Data Preparation and Manipulation
+
+As I explained previously, there are a number of variables that need to be reformatted in order for the models to accurately analyze the data. The variables UIDStoreLocation, Gender, MembershipType, and MembershipLevel are currently formatted as numeric and must be changed to factors. The variable DateJoined is currently formatted as a character and needs to be changed to a date variable.
+
+```{r}
+# changing the following numeric variables to factors
+beach$UIDStoreLocation <- as.factor(beach$UIDStoreLocation)
+beach$Gender <- as.factor(beach$Gender)
+beach$MembershipType <- as.factor(beach$MembershipType)
+beach$MembershipLevel <- as.factor(beach$MembershipLevel)
+
+# changing the following character variable to a date
+beach$DateJoined <- as.Date(beach$DateJoined, "%m/%d/%Y")
+```
+
+Next, I'm going to recode the new factors so that they say their actual level as opposed to just using a number that corresponds to their level. When I create dummy variables for these factors later on, this will help make them easier to understand in the model output.
+
+```{r}
+beach$Gender <- recode_factor(beach$Gender, 
+                              "0" = "Female",
+                              "1" = "Male")
+
+beach$MembershipType <- recode_factor(beach$MembershipType,
+                                      "0" = "Non-Member",
+                                      "1" = "Monthly",
+                                      "2" = "Annual")
+
+beach$MembershipLevel <- recode_factor(beach$MembershipLevel,
+                                       "0" = "Non-Member",
+                                       "1" = "Fast",
+                                       "2" = "Faster",
+                                       "3" = "Fastest",
+                                       "4" = "Instant")
+```
+
+I've decided that two variables, UIDClient and DateJoined, are not needed in the models. UIDClient is unique to each observation (client) and doesn't offer new information for model. DateJoined, as a date variable, would be too complicated for the models to output. Besides, DaysSinceJoined essentially retains similar information as DateJoined.
+
+```{r}
+beach <- beach %>%
+  select(-UIDClient, -DateJoined)
+```
+
+
+

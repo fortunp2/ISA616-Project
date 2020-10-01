@@ -17,7 +17,7 @@ summary(beach)
 head(beach)
 source("/Users/peterfortunato/Documents/MSBA/data summary.R")
 data.summary(beach)
-view(beach)
+View(beach)
 
 # seeing which variables need to be recoded
 str(beach)
