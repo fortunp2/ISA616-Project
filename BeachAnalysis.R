@@ -216,4 +216,5 @@ avg <- aggregate(RetailRevenue~UIDStoreLocation, beach1, mean)
 ggplot(avg, aes(x = UIDStoreLocation, y = RetailRevenue)) +
   geom_col()
 
+seq(from = 1, to = 7, by = .3)
 

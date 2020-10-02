@@ -1,3 +1,0 @@
-"0","ggplot(beach, aes(x = UIDStoreLocation, y = RetailRevenue)) +"
-"0","  geom_col() +"
-"0","  scale_x_discrete(limits = c(""B"", ""J"", ""C"", ""H"", ""E"", ""I"", ""A"", ""F"", ""D"", ""G""))"

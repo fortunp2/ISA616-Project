@@ -1,3 +1,0 @@
-"0","# Loading the DataExplorer package"
-"0","library(DataExplorer)"
-"0","plot_missing(beach)"
