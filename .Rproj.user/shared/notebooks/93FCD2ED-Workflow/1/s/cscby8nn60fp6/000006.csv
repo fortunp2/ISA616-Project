@@ -1,0 +1,6 @@
+"0","# Loading the library that reads in csv files"
+"0","library(readr)"
+"0","# Reading in the Beach Tan dataset"
+"0","beach <- read.csv(""BeachTan/BeachTan.csv"")"
+"0","# Viewing the head of the data"
+"0","head(beach)"

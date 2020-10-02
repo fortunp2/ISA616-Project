@@ -1,0 +1,7 @@
+"0","# changing the following numeric variables to factors"
+"0","beach$UIDStoreLocation <- as.factor(beach$UIDStoreLocation)"
+"0","beach$Gender <- as.factor(beach$Gender)"
+"0","beach$MembershipType <- as.factor(beach$MembershipType)"
+"0","beach$MembershipLevel <- as.factor(beach$MembershipLevel)"
+"0","# changing the following character variable to a date"
+"0","beach$DateJoined <- as.Date(beach$DateJoined, ""%m/%d/%Y"")"

@@ -171,4 +171,49 @@ modelUpgrade <- lm(UpgradeRevenue ~ ., data = beachUpgrade)
 summary(modelUpgrade)
 
 # Some initial observations:
-#   
+
+
+
+
+
+beach1 <-read.csv("BeachTan/BeachTan.csv")
+
+beach1$UIDStoreLocation <- recode_factor(beach$UIDStoreLocation,
+                                         "1" = "A",
+                                         "2" = "B",
+                                         "3" = "C",
+                                         "4" = "D",
+                                         "5" = "E",
+                                         "6" = "F",
+                                         "7" = "G",
+                                         "8" = "H",
+                                         "9" = "I",
+                                         "10" = "J")
+
+ggplot(beach, aes(x = UIDStoreLocation, y = RetailRevenue)) +
+  geom_col() +
+  scale_x_discrete(limits = c("B", "J", "C", "H", "E", "I", "A", "F", "D", "G"))
+
+aggregate(RetailRevenue~UIDStoreLocation, beach1, mean)
+aggregate(RetailRevenue~MembershipLevel, beach1, sum)
+aggregate(RetailRevenue~MembershipType, beach1, sum)
+aggregate(UpgradeRevenue~MembershipType, beach1, sum)
+
+summary(as.factor(beach1$UIDStoreLocation))
+aggregate(RetailRevenue~UIDStoreLocation, beach1, sum)
+
+a <- c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J")
+b <- c(814, 1515, 1092, 886, 1197, 778, 848, 1282, 1034, 1595)
+c <- c(45279.83, 96623.01, 63807.34, 42244.73, 57229.70, 45162.91, 13968.67, 60553.72, 55214.93, 72635.85)
+d <- c/b
+
+a
+d
+beach1$UIDStoreLocation <- as.factor(beach1$UIDStoreLocation)
+avg <- aggregate(RetailRevenue~UIDStoreLocation, beach1, mean)
+
+
+ggplot(avg, aes(x = UIDStoreLocation, y = RetailRevenue)) +
+  geom_col()
+
+

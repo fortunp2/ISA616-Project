@@ -1,5 +1,4 @@
-"0","library(readr)"
-"0","beach <- read.csv(""BeachTan/BeachTan.csv"")"
+"0","# Viewing the structure of the data"
 "0","str(beach)"
 "1","'data.frame':	"
 "1","11041"
