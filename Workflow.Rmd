@@ -13,7 +13,6 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 options(scipen = 999)
-library(knitr)
 library(tidyverse)
 library(readr)
 ```
