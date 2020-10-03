@@ -1,31 +1,35 @@
 ---
 title: "Beach Tan Explanatory Analysis"
 author: "Peter Fortunato"
-date: "10/1/2020"
+date: "10/2/2020"
 output: 
   html_document:
-  toc: TRUE
-  toc_float: TRUE
-  number_sections: TRUE
+    toc: TRUE
+    toc_float: TRUE
+    number_sections: FALSE
 
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 options(scipen = 999)
+library(knitr)
+library(tidyverse)
+library(readr)
 ```
 
-## 1 Introduction and Data Dictionary
+# 1. Introduction and Data Dictionary
 
 Beach Tan Inc. is a major national franchiser of tanning salons. Their two main products include "UV Tans", which are offered in tanning beds or stand-up booths, and "Sunless Tans", which are provided via a spray-on solution and do not expose the user to any UV tans. 
 
 In addition to their two methods of tanning, Beach Tan Inc. also sells specially formulated skin care products that can enhance the quality and duration of tanning results.
 
-Beach Tan Inc. also offers a convenient membership program allows clients more control over their decision-making power.
+Beach Tan Inc. also offers a convenient membership program that gives clients more control over their decision-making power.
 
-### 1.1 Reading in the data
+## 1.1 Reading in the data
 
 The csv file containing the Beach Tan data resides in this project directory.
+
 ```{r}
 # Loading the library that reads in csv files
 library(readr)
@@ -35,9 +39,10 @@ beach <- read.csv("BeachTan/BeachTan.csv")
 
 # Viewing the head of the data
 head(beach)
+
 ```
 
-### 1.2 Variable Overview
+## 1.2 Variable Overview
 
 ```{r}
 # Viewing the structure of the data
@@ -61,21 +66,19 @@ This data frame of 11,041 observations and 12 variables was collected in 2014. A
 
 Looking at the structure of the Beach Tan data frame and understanding the information presented within the variables, it's clear that I will need to change the format of some of the variables. However, I will get to that in another section.
 
-## 2 Analysis Preview and Revision of Business Value Proposition
+# 2. Analysis Preview and Revision of Business Value Proposition
 
-### 2.1 Reasons for Revising Business Value Proposition
-
-In my original Business Value Proposition, I outlined how the two main products that I would deliver with my analysis were a predictive model to understand future clients' spend as well as a visualization dashboard to help non-members understand how their spending habbits would be better suited if they were to become a member.
+In my original Business Value Proposition, I outlined how the two main products that I would deliver with my analysis were a predictive model to understand future clients' spending as well as a visualization dashboard to help non-members understand how their spending habits would be better suited if they were to become a member.
 
 After working with this data set for some time, I've come to the conclusion that neither of those two products are feasible. The predictive model cannot be done for there are no new observations in which to predict their total Retail Revenue. And for the visualization dashboard, the data doesn't really explain how much members are saving versus non-members.
 
-It is for these reasons that I have decided to change the product which I will be offering. Instead of a predictive model and visualization dashboard, I shall conduct two explanatory analyses in order to understand two things: the variables that explain Retail Revenue as well as the variables that explain Upgraded Revenue. 
+It is for these reasons that I have decided to change the product which I will be offering. Instead of a predictive model and visualization dashboard, I shall conduct two explanatory analyses in order to understand two things: how the variables explain Retail Revenue as Upgraded Revenue. 
 
 The revised Business Value Propositions are included in the repository files.
 
-## 3 Data Manipulation, Exploration and Preparation
+# 3. Data Manipulation, Exploration and Preparation
 
-### 3.1 Reformatting variables to factors
+## 3.1 Reformatting variables to factors
 
 As I explained previously, there are a number of variables that need to be reformatted in order for the models to accurately analyze the data. The variables UIDStoreLocation, Gender, MembershipType, and MembershipLevel are currently formatted as numeric and must be changed to factors. The variable DateJoined is currently formatted as a character and needs to be changed to a date variable.
 
@@ -90,16 +93,13 @@ beach$MembershipLevel <- as.factor(beach$MembershipLevel)
 beach$DateJoined <- as.Date(beach$DateJoined, "%m/%d/%Y")
 ```
 
-### 3.2 Recoding factors to reflect their information
+## 3.2 Recoding factors to reflect their information
 
-Next, I'm going to recode the new factors so that they say their actual level as opposed to just using a number that corresponds to their level. I will also recode the UIDStoreLocation variable so that it's labels are more agreeable to code. When I create dummy variables for these factors later on, this will help make them easier to understand in the model output. 
+Next, I'm going to recode the new factors so that they say their actual level as opposed to just using a number that corresponds to their level. I will also recode the UIDStoreLocation variable so that its labels are more agreeable to code. When I create dummy variables for these factors later on, this will help make them easier to understand in the model output. 
 
 The tidyverse package contains a variaty of packages that will assist me in my analysis. I will preface any use of a function with the package that it comes from. For example, the function `recode_factor` belongs to the dplyr package in the tidyverse family.
 
 ```{r}
-# Loading in the tidyverse package
-library(tidyverse)
-
 # Recoding the factors in Gender
 beach$Gender <- recode_factor(beach$Gender, 
                               "0" = "Female",
@@ -133,7 +133,7 @@ beach$UIDStoreLocation <- recode_factor(beach$UIDStoreLocation,
                                          "10" = "J")
 ```
 
-### 3.3 Creating summary visualizations of the continuous and categorical variables and removing ununusal observations/unneeded variables
+## 3.3 Summary Visualizations/Removing Ununusal Observations
 
 Now that the variables in the data are properly formatted, we can take an accurate overview of the data with help from the DataExplorer package. I want to first explore the distribution of missing values in the data set.
 
@@ -161,7 +161,7 @@ beach <- beach %>%
   select(-UIDClient)
 ```
 
-Second, the histogram for DaysSinceJoined appears to have values above 40,000, which indicates that some members/customers joined over 100 years ago. Let's see what's going on with these rows.
+Second, the histogram for DaysSinceJoined appears to have values above 40,000, which indicates that some members/customers joined over 100 years ago. I want to understand what's going on here.
 
 ```{r}
 # The `filter` function belongs to the dplyr package
@@ -179,21 +179,21 @@ hist(beach$DaysSinceJoined)
 
 This distribution of DaysSinceJoined now looks more realistic.
 
-While we are at it, we should also remove DateJoined from the data, as it will complicate the model and that type of information is already stored in the DaysSinceJoined variable.
+While I am at it, I will also remove DateJoined from the data, as it will complicate the model and that type of information is already stored in the DaysSinceJoined variable.
 
 ```{r}
 beach <- beach %>%
   select(-DateJoined)
 ```
 
-Now let's look at the distribution of the categorical variables.
+Here are the distributions of the categorical variables.
 
 ```{r}
 # Distribution of factors
 plot_bar(beach)
 ```
 
-It's clear that Female and Non-Member customers make up the majority of the clientel of Beach Tan Inc. 
+It's clear that Females, Non-Members, and Monthly Membership customers make up the majority of the clientel of Beach Tan Inc. 
 
 The Gender variable has a coule of N/A values, and there's no point in making an extra dummy variable for a level of a factor that has a miniscule number of obersvations, so I'm going to remove those rows as well.
 
@@ -205,13 +205,13 @@ plot_missing(beach)
 
 Now we have a data set with exactly 0 missing rows.
 
-## 4 Aggregated Visualizations
+# 4. Aggregated Visualizations
 
 The purpose of these visualizations is to analyze trends between either Retail Revenue or Upgrade Revenue (the response variables for the two models I will be making) and various predictor variables. While they won't have the same analytical power as the mdoels, they will still provide valuable insight for Beach Tan Inc. 
 
 For these visualizations, I will be using functions from the `ggplot2` package from the `tidyverse` family.
 
-### 4.1 Total Retail Revenue by Store Location
+## 4.1 Total Retail Revenue by Store Location
 
 ```{r}
 # Aggregating Retail Revenue by Store Location
@@ -259,7 +259,8 @@ p2
 ```
 
 
-### 4.2 Total Retail Revenue by Membership Level
+## 4.2 Total Retail Revenue by Membership Level
+
 ```{r}
 # Aggregating Retail Revenue by Membership Level
 levelsum <- aggregate(RetailRevenue~MembershipLevel, beach, sum)
@@ -283,9 +284,10 @@ p3
   
 ```
 
-The "Fast" level is performing the best while the "Fastest" level is performing the worst. I wonder 
+The "Fast" level is performing the best while the "Fastest" level is performing the worst. 
 
-### 4.3 Total Retail Revenue by Membership Type
+## 4.3 Total Retail Revenue by Membership Type
+
 ```{r}
 # Aggregating Retail Revenue by Membership Type
 typesum <- aggregate(RetailRevenue~MembershipType, beach, sum)
@@ -309,9 +311,9 @@ p4 <- ggplot(typesum, aes(x = reorder(MembershipType, -RetailRevenue), y = Retai
 p4
 ```
 
-From this visualization, I can clearly see that customers with Monthly Memberships are far and away the drivers of Revenue for Beach Tan Inc. 
+From this visualization, I can clearly see that customers with Monthly Memberships are far and away the drivers of Revenue for Beach Tan Inc. Their marketing team definitely needs to focus on them most and see if they can devise of promotions so that they convert to Annaul Memberships, which are lagging behind.
 
-### 4.5 Total Upgraded Revenue by Membership Level
+## 4.5 Total Upgrade Revenue by Membership Level
 
 ```{r}
 # Aggregating Upgrade Revenue by Membership Level
@@ -325,7 +327,7 @@ p5 <- ggplot(levelsum1, aes(x = reorder(MembershipLevel, -UpgradeRevenue), y = U
                      breaks = c(0, 10000, 20000, 30000, 40000, 50000, 60000, 70000)) +
   ylab("Upgrade Revenue ($)") +
   xlab("Membership Level") +
-  labs(title = "Total Retail Revenue by Membership Level") +
+  labs(title = "Total Upgrade Revenue by Membership Level") +
   theme_bw() +
   theme(
     panel.grid.major.x = element_blank(),
@@ -335,14 +337,42 @@ p5 <- ggplot(levelsum1, aes(x = reorder(MembershipLevel, -UpgradeRevenue), y = U
 p5
 ```
 
+Fast members appear to spending the most on upgrading. Members who've initially joined the program are already wanting better products but are unwilling to upgrade their membership. I wonder if this feature will show up in the model later.
 
-## 5 Model Preparation
+## 4.6 Total Upgrade Revenue by Membership Type
 
-### 5.4 Creating Dummy Variables
+```{r}
+# Aggregating Upgrade Revenue by Membership Type
+typesum1 <- aggregate(UpgradeRevenue~MembershipType, beach, sum)
+
+# Creating a plot and assigning it to an object
+p6 <- ggplot(typesum1, aes(x = reorder(MembershipType, -UpgradeRevenue), y = UpgradeRevenue)) +
+  geom_col(colour = "black", fill = "gold") + 
+  scale_y_continuous(expand = c(0,0),
+                     limits = c(0, 110000),
+                     breaks = c(0, 25000, 50000, 75000, 100000)) +
+  ylab("Upgrade Revenue ($)") +
+  xlab("Membership Level") +
+  labs(title = "Total Upgrade Revenue by Membership Level") +
+  theme_bw() +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank()
+  )
+
+p6
+```
+
+These results aren't as useful as the previous graph as Monthly Members are already driving most of the Retail Revenue, so it would make sense that they are also driving most of the Upgrade Revenue as well.
+
+# 5. Model Preparation
+
+## 5.1 Creating Dummy Variables
 
 In order to allow the data to be more conducive to the model, I will be manually creating dummy variables for each of the factors in the data set.
 
-This 
+The following code creates dummy a dummy matrix for each factor and then transforms each matrix into a data frame.
+
 ```{r}
 # Creating dummy variables for factors in the data frame
 dum1 <- model.matrix(~0 + UIDStoreLocation, data = beach)
@@ -358,53 +388,68 @@ dum4 <- model.matrix(~0 + MembershipLevel, data = beach)
 dum4 <- as.data.frame(dum4)
 ```
 
+## 5.2 Appending Dummy Variables to Data Frame
+
 ```{r}
 # Adding dummy variables to the data frame
-
 beach <- cbind(beach, dum1, dum2, dum3, dum4)
-
-colnames(beach)
 ```
 
 
-# Removing original variables plus one dummy for each factor
+## 5.3 Removing original variables plus one dummy for each factor
+
+In order for the models to be accurate, I must remove redundant information, or else the models will run into problems. This means removing the original factors as well as one dummy variable for each factor as the intercept will contain that information. 
+
+What I mean by that is for example, Gender will be tranformed into GenderMale and GenderMale. I no longer need the Gender variable, but I also don't need GenderMale. Because when GenderFemale registers as 1, the gender is Female, and when GenderFemale is 0, the gender is male. Keeping Gender and GenderMale is redunant and would compromise the integrity of the models.
+
 ```{r}
 beach1 <- beach %>%
   select(-UIDStoreLocation, -Gender, -MembershipType, -MembershipLevel, 
          -UIDStoreLocationA, -GenderMale, -MembershipLevelInstant, MembershipTypeAnnual)
 ```
 
+## 5.4 Factorizing each dummy variable
+
+When the dummy variables were created, they were formatted as numeric variables. In order for them to be accurately modeled, they must be reformatted as factors.
 
 ```{r}
 # Recoding each dummy variable as factors
 
-beach$UIDStoreLocationB <- as.factor(beach$UIDStoreLocationB)
-beach$UIDStoreLocationC <- as.factor(beach$UIDStoreLocationC)
-beach$UIDStoreLocationD <- as.factor(beach$UIDStoreLocationD)
-beach$UIDStoreLocationE <- as.factor(beach$UIDStoreLocationE)
-beach$UIDStoreLocationF <- as.factor(beach$UIDStoreLocationF)
-beach$UIDStoreLocationG <- as.factor(beach$UIDStoreLocationG)
-beach$UIDStoreLocationH <- as.factor(beach$UIDStoreLocationH)
-beach$UIDStoreLocationI <- as.factor(beach$UIDStoreLocationI)
-beach$UIDStoreLocationJ <- as.factor(beach$UIDStoreLocationJ)
-beach$GenderFemale <- as.factor(beach$GenderFemale)
-beach$`MembershipTypeNon-Member` <- as.factor(beach$`MembershipTypeNon-Member`)
-beach$MembershipTypeMonthly <- as.factor(beach$MembershipTypeMonthly)
-beach$MembershipLevelFast <- as.factor(beach$MembershipLevelFast)
-beach$MembershipLevelFaster <- as.factor(beach$MembershipLevelFaster)
-beach$MembershipLevelFastest <- as.factor(beach$MembershipLevelFastest)
-beach$`MembershipLevelNon-Member` <- as.factor(beach$`MembershipLevelNon-Member`)
+beach1$UIDStoreLocationB <- as.factor(beach1$UIDStoreLocationB)
+beach1$UIDStoreLocationC <- as.factor(beach1$UIDStoreLocationC)
+beach1$UIDStoreLocationD <- as.factor(beach1$UIDStoreLocationD)
+beach1$UIDStoreLocationE <- as.factor(beach1$UIDStoreLocationE)
+beach1$UIDStoreLocationF <- as.factor(beach1$UIDStoreLocationF)
+beach1$UIDStoreLocationG <- as.factor(beach1$UIDStoreLocationG)
+beach1$UIDStoreLocationH <- as.factor(beach1$UIDStoreLocationH)
+beach1$UIDStoreLocationI <- as.factor(beach1$UIDStoreLocationI)
+beach1$UIDStoreLocationJ <- as.factor(beach1$UIDStoreLocationJ)
+beach1$GenderFemale <- as.factor(beach1$GenderFemale)
+beach1$`MembershipTypeNon-Member` <- as.factor(beach1$`MembershipTypeNon-Member`)
+beach1$MembershipTypeMonthly <- as.factor(beach1$MembershipTypeMonthly)
+beach1$MembershipLevelFast <- as.factor(beach1$MembershipLevelFast)
+beach1$MembershipLevelFaster <- as.factor(beach1$MembershipLevelFaster)
+beach1$MembershipLevelFastest <- as.factor(beach1$MembershipLevelFastest)
+beach1$`MembershipLevelNon-Member` <- as.factor(beach1$`MembershipLevelNon-Member`)
 ```
+
+## 5.5 Model Data Sets
+
+Finally, I need to create two unique data sets for each model. The model explaining Retail Revenue should not include Ugrade Revenue, as that value is already inside Retail Revenue. It's also the response variable for the other model.
+
+The model explaining Upgrade Revenue should not include Retail Revenue, which is the response variable for the previous model.
 
 ```{r}
 beachRetail <- beach1 %>%
   select(-UpgradeRevenue)
 
 beachUpgrade <- beach1 %>%
-  select(-RetailRevenue, -`MembershipTypeNon-Member`, -`MembershipLevelNon-Member`)
+  select(-RetailRevenue)
 ```
 
 # 6. Model Output and Summary
+
+I will now be fitting the two data sets to their respective models.
 
 ```{r}
 # Creating linear model 1
@@ -414,13 +459,51 @@ modelRetail <- lm(RetailRevenue ~ ., data = beachRetail)
 modelUpgrade <- lm(UpgradeRevenue ~ ., data = beachUpgrade)
 ```
 
+## 6.1 Output and Evaluation of Model 1
+
 ```{r}
 summary(modelRetail)
 ```
+
+In order to determine which variables are most important and useful in explaining Retail Revenue, I will be looking the t-value for each predictor. The further away from 0 a t-value is, the more likely it is important for the model.
+
+The most important predictor in this model is UVTans. For an increase of one UV Tan (with everything else held constant), a customer is likely to spend $1.15 more than not. 
+
+The second-most important predictor is MembershipLevelFast. For every customer has a Membership Level Fast (holding everthing else constant), they are likely to spend $54.79 less compared to those that don't.
+
+The third-most important predictor is SunlessTans. For an increase of one Sunless tan (holding everything else constant), a customer is likely to spend $1.05 more than not.
+
+Another interesting feature of this model is that Females are likely to spend $18.23 more than Males, holding everything else constant.
+
+In evaluating this model, I will look at the Multiple R-squared value, which is a percentage value that explains how much of the variablilty in the data is explained by the model. With an Multiple R-squared value of 0.3457, 34% of the variability is explained by this model. This model does not explain that much, and I probably wouldn't use it to predict the expected Retail Revenue of new customers.
+
+## 6.2 Output and Evaluation of Model 2
 
 ```{r}
 summary(modelUpgrade)
 ```
 
+The most important predictor in this model is UVTans. For an increase of one UV Tan (with everything else held constant), a customer on average spends $0.36 more on upgrades than not. 
+
+The second-most important predictor is SunlessTans. For an increase of one Sunless tan (holding everything else constant), a customer on average spends $0.83 more than not.
+
+The third-most important predictor is MembershipLevelFast. For every customer has a Membership Level Fast (holding everthing else constant), they will on average spend $18.51 more on upgrades than those who aren't Membership Level Fast.
+
+Another interesting feature of this model is that Store I customers on average spend $10.86 on upgrades versus those who don't shop at Store I (holding everything else constant). The salespeople at Store I definitely deserve a raise.
+
+The Multiple R-squared value in this model is 0.2412, meaning 24% of the variability is explained by this model. This model explains even less than the previous model, and so I'm even more likely to not use this model in order to predict new customers' habits on spending for upgraded products.
+
 # 7. Conclusion
+
+Based on the output of the models and the summary visualizations, I offer three suggestions for Beach Tan Inc. to consider:
+* Focus efforts on converting Fast Level Members to Faster or higher as Beach Tan is losing money on those clients.
+* Close Store G as it is probably running a loss and lags far behind the other stores.
+* Females are spending more than males, so focus marketing efforts on them as well.
+
+For customers of Beach Tan Inc., I suggest that:
+* If your Membership Level is Fast, consider upgrading as you are spending much more money than everyone else on better quality tanning equipment
+* Avoid Store I if you don't if you are content with you current level of tanning solutions.
+
+However, while these conclusions are based on the models I constructed, I would not completely trust the accuracy of these models due to their low R-squared values. These models can be improved if more data and data types are added to the data set. 
+
 

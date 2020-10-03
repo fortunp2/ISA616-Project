@@ -218,3 +218,4 @@ ggplot(avg, aes(x = UIDStoreLocation, y = RetailRevenue)) +
 
 seq(from = 1, to = 7, by = .3)
 
+

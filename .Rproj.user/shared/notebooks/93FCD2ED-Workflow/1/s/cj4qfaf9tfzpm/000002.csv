@@ -1,5 +1,3 @@
-"0","# Loading in the tidyverse package"
-"0","library(tidyverse)"
 "0","# Recoding the factors in Gender"
 "0","beach$Gender <- recode_factor(beach$Gender, "
 "0","                              ""0"" = ""Female"","

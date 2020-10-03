@@ -1,0 +1,2 @@
+"0","# Adding dummy variables to the data frame"
+"0","beach <- cbind(beach, dum1, dum2, dum3, dum4)"

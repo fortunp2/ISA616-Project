@@ -1,0 +1,4 @@
+"0","beachRetail <- beach1 %>%"
+"0","  select(-UpgradeRevenue)"
+"0","beachUpgrade <- beach1 %>%"
+"0","  select(-RetailRevenue)"
