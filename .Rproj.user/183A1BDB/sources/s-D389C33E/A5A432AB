@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1601474688017.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "A5A432AB",
+    "lastKnownWriteTime" : 1601683313,
+    "last_content_update" : 1601683313463,
+    "path" : "~/Documents/MSBA/ISA 616/ISA616-Project/BeachAnalysis.R",
+    "project_path" : "BeachAnalysis.R",
+    "properties" : {
+        "cursorPosition" : "220,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

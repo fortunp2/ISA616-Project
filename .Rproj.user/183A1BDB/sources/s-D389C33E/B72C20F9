@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1601695748407.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1581208541",
+    "id" : "B72C20F9",
+    "lastKnownWriteTime" : 1602765238,
+    "last_content_update" : 1602765238152,
+    "path" : "~/Documents/MSBA/ISA 616/ISA616-Project/Workflow_fortunp2.Rmd",
+    "project_path" : "Workflow_fortunp2.Rmd",
+    "properties" : {
+        "cursorPosition" : "192,43",
+        "last_setup_crc32" : "D389C33Ef72a3871",
+        "scrollLine" : "177"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

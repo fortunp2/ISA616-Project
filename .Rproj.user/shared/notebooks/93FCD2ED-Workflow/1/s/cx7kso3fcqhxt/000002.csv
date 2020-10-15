@@ -1,3 +1,0 @@
-"0","beach1 <- beach %>%"
-"0","  select(-UIDStoreLocation, -Gender, -MembershipType, -MembershipLevel, "
-"0","         -UIDStoreLocationA, -GenderMale, -MembershipLevelInstant, MembershipTypeAnnual)"

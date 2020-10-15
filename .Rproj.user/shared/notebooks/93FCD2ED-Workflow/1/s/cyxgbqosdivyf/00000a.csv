@@ -1,3 +1,0 @@
-"0","beach <- beach %>%"
-"0","  filter(DaysSinceJoined < 40000)"
-"0","hist(beach$DaysSinceJoined)"

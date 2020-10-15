@@ -1,3 +1,0 @@
-"0","# The `na_omit` function belongs to the stats package."
-"0","beach <- na.omit(beach)"
-"0","plot_missing(beach)"

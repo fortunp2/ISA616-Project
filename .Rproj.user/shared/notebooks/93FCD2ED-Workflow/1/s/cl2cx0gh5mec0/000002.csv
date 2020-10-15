@@ -1,4 +1,0 @@
-"0","# Creating linear model 1"
-"0","modelRetail <- lm(RetailRevenue ~ ., data = beachRetail)"
-"0","# Creating linear model 2"
-"0","modelUpgrade <- lm(UpgradeRevenue ~ ., data = beachUpgrade)"
