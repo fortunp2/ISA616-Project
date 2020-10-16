@@ -17,6 +17,30 @@ library(tidyverse)
 library(readr)
 ```
 
+# 0.1 Software Environment
+
+```{r}
+
+```
+
+# 0.2 Packages Used
+
+The following packages were used in this analysis:
+* **DataExplorer*: to get an overview of the data and understand its degree of missingness
+* **tidyverse*: includes dplyr (has extra functions for data manipulation) and ggplot2 (for data visualization)
+* **readr*: function to read in csv data files
+* **lubridate*: includes inuative functions for manipulating dates
+
+```{r}
+if(require(checkpoint)==FALSE)
+  install.packages("checkpoint")
+checkpoint(snapshotDate = "2020-10-16")
+if(require(pacman)==FALSE)
+  install.packages("pacman")
+p_load(DataExplorer, tidyverse, readr, lubridate)
+```
+
+
 # 1. Introduction and Data Dictionary
 
 Beach Tan Inc. is a major national franchiser of tanning salons. Their two main products include "UV Tans", which are offered in tanning beds or stand-up booths, and "Sunless Tans", which are provided via a spray-on solution and do not expose the user to any UV tans. 
@@ -391,81 +415,19 @@ These results aren't as useful as the previous graph as Monthly Members are alre
 
 ## 5.1 Creating Dummy Variables
 
-In order to allow the data to be more conducive to the model, I will be manually creating dummy variables for each of the factors in the data set.
+The lm() function in R automatically creates dummy variables for the factors in the data sets, so I will not have to manually create them.
 
-The following code creates dummy a dummy matrix for each factor and then transforms each matrix into a data frame.
+## 5.2 Model Data Sets
 
-```{r}
-# Creating dummy variables for factors in the data frame
-dum1 <- model.matrix(~0 + UIDStoreLocation, data = beach)
-dum1 <- as.data.frame(dum1)
+Because I'm creating one model that explains Upgrade Revenue and another that explains Retail Revenue, I need to create two unique data sets for each model. 
 
-dum2 <- model.matrix(~0 + Gender, data = beach)
-dum2 <- as.data.frame(dum2)
-
-dum3 <- model.matrix(~0 + MembershipType, data = beach)
-dum3 <- as.data.frame(dum3)
-
-dum4 <- model.matrix(~0 + MembershipLevel, data = beach)
-dum4 <- as.data.frame(dum4)
-```
-
-## 5.2 Appending Dummy Variables to Data Frame
+The model explaining Retail Revenue should not include Ugrade Revenue, as that value is already inside Retail Revenue. It's also the response variable for the other model.The model explaining Upgrade Revenue should not include Retail Revenue, which is the response variable for the previous model.
 
 ```{r}
-# Adding dummy variables to the data frame
-beach <- cbind(beach, dum1, dum2, dum3, dum4)
-```
-
-
-## 5.3 Removing original variables plus one dummy for each factor
-
-In order for the models to be accurate, I must remove redundant information, or else the models will run into problems. This means removing the original factors as well as one dummy variable for each factor as the intercept will contain that information. 
-
-What I mean by that is for example, Gender will be tranformed into GenderMale and GenderMale. I no longer need the Gender variable, but I also don't need GenderMale. Because when GenderFemale registers as 1, the gender is Female, and when GenderFemale is 0, the gender is male. Keeping Gender and GenderMale is redunant and would compromise the integrity of the models.
-
-```{r}
-beach1 <- beach %>%
-  select(-UIDStoreLocation, -Gender, -MembershipType, -MembershipLevel, 
-         -UIDStoreLocationA, -GenderMale, -MembershipLevelInstant, MembershipTypeAnnual)
-```
-
-## 5.4 Factorizing each dummy variable
-
-When the dummy variables were created, they were formatted as numeric variables. In order for them to be accurately modeled, they must be reformatted as factors.
-
-```{r}
-# Recoding each dummy variable as factors
-
-beach1$UIDStoreLocationB <- as.factor(beach1$UIDStoreLocationB)
-beach1$UIDStoreLocationC <- as.factor(beach1$UIDStoreLocationC)
-beach1$UIDStoreLocationD <- as.factor(beach1$UIDStoreLocationD)
-beach1$UIDStoreLocationE <- as.factor(beach1$UIDStoreLocationE)
-beach1$UIDStoreLocationF <- as.factor(beach1$UIDStoreLocationF)
-beach1$UIDStoreLocationG <- as.factor(beach1$UIDStoreLocationG)
-beach1$UIDStoreLocationH <- as.factor(beach1$UIDStoreLocationH)
-beach1$UIDStoreLocationI <- as.factor(beach1$UIDStoreLocationI)
-beach1$UIDStoreLocationJ <- as.factor(beach1$UIDStoreLocationJ)
-beach1$GenderFemale <- as.factor(beach1$GenderFemale)
-beach1$`MembershipTypeNon-Member` <- as.factor(beach1$`MembershipTypeNon-Member`)
-beach1$MembershipTypeMonthly <- as.factor(beach1$MembershipTypeMonthly)
-beach1$MembershipLevelFast <- as.factor(beach1$MembershipLevelFast)
-beach1$MembershipLevelFaster <- as.factor(beach1$MembershipLevelFaster)
-beach1$MembershipLevelFastest <- as.factor(beach1$MembershipLevelFastest)
-beach1$`MembershipLevelNon-Member` <- as.factor(beach1$`MembershipLevelNon-Member`)
-```
-
-## 5.5 Model Data Sets
-
-Finally, I need to create two unique data sets for each model. The model explaining Retail Revenue should not include Ugrade Revenue, as that value is already inside Retail Revenue. It's also the response variable for the other model.
-
-The model explaining Upgrade Revenue should not include Retail Revenue, which is the response variable for the previous model.
-
-```{r}
-beachRetail <- beach1 %>%
+beachRetail <- beach %>%
   select(-UpgradeRevenue)
 
-beachUpgrade <- beach1 %>%
+beachUpgrade <- beach %>%
   select(-RetailRevenue)
 ```
 
@@ -481,25 +443,14 @@ modelRetail <- lm(RetailRevenue ~ ., data = beachRetail)
 modelUpgrade <- lm(UpgradeRevenue ~ ., data = beachUpgrade)
 ```
 
-## 6.1 Output and Evaluation of Model 1
+## 6.1 Output of Model 1
 
 ```{r}
 summary(modelRetail)
 ```
 
-In order to determine which variables are most important and useful in explaining Retail Revenue, I will be looking the t-value for each predictor. The further away from 0 a t-value is, the more likely it is important for the model.
 
-The most important predictor in this model is UVTans. For an increase of one UV Tan (with everything else held constant), a customer is likely to spend $1.15 more than not. 
-
-The second-most important predictor is MembershipLevelFast. For every customer has a Membership Level Fast (holding everthing else constant), they are likely to spend $54.79 less compared to those that don't.
-
-The third-most important predictor is SunlessTans. For an increase of one Sunless tan (holding everything else constant), a customer is likely to spend $1.05 more than not.
-
-Another interesting feature of this model is that Females are likely to spend $18.23 more than Males, holding everything else constant.
-
-In evaluating this model, I will look at the Multiple R-squared value, which is a percentage value that explains how much of the variablilty in the data is explained by the model. With an Multiple R-squared value of 0.3457, 34% of the variability is explained by this model. This model does not explain that much, and I probably wouldn't use it to predict the expected Retail Revenue of new customers.
-
-## 6.2 Output and Evaluation of Model 2
+## 6.2 Output of Model 2
 
 ```{r}
 summary(modelUpgrade)
@@ -516,6 +467,34 @@ Another interesting feature of this model is that Store I customers on average s
 The Multiple R-squared value in this model is 0.2412, meaning 24% of the variability is explained by this model. This model explains even less than the previous model, and so I'm even more likely to not use this model in order to predict new customers' habits on spending for upgraded products.
 
 # 7. Conclusion
+
+## 7.1 Evaluation of Model 1
+
+In order to determine which variables are most important and useful in explaining Retail Revenue, I will be looking the t-value for each predictor. The further away from 0 a t-value is, the more likely it is important for the model.
+
+The most important predictor in this model is UVTans. For an increase of one UV Tan (with everything else held constant), a customer is likely to spend $1.15 more than not. 
+
+The second-most important predictor is MembershipLevelFast. For every customer has a Membership Level Fast (holding everthing else constant), they are likely to spend $54.79 less compared to those that don't.
+
+The third-most important predictor is SunlessTans. For an increase of one Sunless tan (holding everything else constant), a customer is likely to spend $1.05 more than not.
+
+Another interesting feature of this model is that Females are likely to spend $18.23 more than Males, holding everything else constant.
+
+In evaluating this model, I will look at the Multiple R-squared value, which is a percentage value that explains how much of the variablilty in the data is explained by the model. With an Multiple R-squared value of 0.3457, 34% of the variability is explained by this model.
+
+## 7.2 Evaluation of Model 2
+
+The most important predictor in this model is UVTans. For an increase of one UV Tan (with everything else held constant), a customer on average spends $0.36 more on upgrades than not. 
+
+The second-most important predictor is SunlessTans. For an increase of one Sunless tan (holding everything else constant), a customer on average spends $0.83 more than not.
+
+The third-most important predictor is MembershipLevelFast. For every customer has a Membership Level Fast (holding everthing else constant), they will on average spend $18.51 more on upgrades than those who aren't Membership Level Fast.
+
+Another interesting feature of this model is that Store I customers on average spend $10.86 on upgrades versus those who don't shop at Store I (holding everything else constant). The salespeople at Store I definitely deserve a raise.
+
+The Multiple R-squared value in this model is 0.2412, meaning 24% of the variability is explained by this model. 
+
+## 7.3 Recommendations for Beach Tan, Inc.
 
 Based on the output of the models and the summary visualizations, I offer three suggestions for Beach Tan Inc. to consider:
 * Focus efforts on converting Fast Level Members to Faster or higher as Beach Tan is losing money on those clients.

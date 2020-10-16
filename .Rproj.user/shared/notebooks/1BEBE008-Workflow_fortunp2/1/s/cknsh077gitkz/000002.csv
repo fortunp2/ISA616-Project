@@ -1,2 +1,0 @@
-"0","# The `filter` function belongs to the dplyr package"
-"0","filter(beach, DaysSinceJoined > 40000)"
