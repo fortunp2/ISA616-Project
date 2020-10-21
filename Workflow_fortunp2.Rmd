@@ -466,9 +466,15 @@ Another interesting feature of this model is that Store I customers on average s
 
 The Multiple R-squared value in this model is 0.2412, meaning 24% of the variability is explained by this model. This model explains even less than the previous model, and so I'm even more likely to not use this model in order to predict new customers' habits on spending for upgraded products.
 
+```{r}
+plot(modelRetail$residuals)
+plot(modelUpgrade$residuals)
+```
+
+
 # 7. Conclusion
 
-## 7.1 Evaluation of Model 1
+## 7.1 Results of Model 1
 
 In order to determine which variables are most important and useful in explaining Retail Revenue, I will be looking the t-value for each predictor. The further away from 0 a t-value is, the more likely it is important for the model.
 
@@ -482,7 +488,7 @@ Another interesting feature of this model is that Females are likely to spend $1
 
 In evaluating this model, I will look at the Multiple R-squared value, which is a percentage value that explains how much of the variablilty in the data is explained by the model. With an Multiple R-squared value of 0.3457, 34% of the variability is explained by this model.
 
-## 7.2 Evaluation of Model 2
+## 7.2 Results of Model 2
 
 The most important predictor in this model is UVTans. For an increase of one UV Tan (with everything else held constant), a customer on average spends $0.36 more on upgrades than not. 
 
@@ -505,6 +511,6 @@ For customers of Beach Tan Inc., I suggest that:
 * If your Membership Level is Fast, consider upgrading as you are spending much more money than everyone else on better quality tanning equipment
 * Avoid Store I if you don't if you are content with you current level of tanning solutions.
 
-However, while these conclusions are based on the models I constructed, I would not completely trust the accuracy of these models due to their low R-squared values. These models can be improved if more data and data types are added to the data set. 
+These models can be improved if more data and data types are added to the data set. 
 
 
